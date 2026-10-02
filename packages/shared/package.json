@@ -1,0 +1,19 @@
+{
+  "name": "@retail/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./dashboard": "./src/dashboard.ts",
+    "./filters": "./src/filters.ts",
+    "./format": "./src/format.ts",
+    "./erp": "./src/erp.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

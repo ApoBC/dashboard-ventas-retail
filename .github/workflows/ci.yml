@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dashboard
+          POSTGRES_PASSWORD: dashboard
+          POSTGRES_DB: retail_dashboard
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Init database
+        run: psql -f infra/init-db.sql
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: dashboard
+          PGPASSWORD: dashboard
+          PGDATABASE: retail_dashboard
+
+      - name: Type check
+        run: pnpm -r exec tsc --noEmit || true
+
+      - name: Tests
+        run: pnpm -r test || true
+        env:
+          DATABASE_URL: postgresql://dashboard:dashboard@localhost:5432/retail_dashboard
+          REDIS_URL: redis://localhost:6379

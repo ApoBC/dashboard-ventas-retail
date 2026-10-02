@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --chart-1: #378ADD;
+  --chart-2: #1D9E75;
+  --chart-3: #D85A30;
+  --chart-4: #7F77DD;
+  --chart-5: #888780;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --chart-1: #85B7EB;
+    --chart-2: #5DCAA5;
+    --chart-3: #F0997B;
+    --chart-4: #AFA9EC;
+    --chart-5: #B4B2A9;
+  }
+}
+
+body {
+  font-variant-numeric: tabular-nums;
+}
